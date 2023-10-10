@@ -11,11 +11,16 @@ DECLARE
     question_id QUESTION.ID%TYPE;
     content_id CONTENT.ID%TYPE;
     category_id TAG.ID%TYPE;
+    random_date timestamp;
 BEGIN
+    -- TODO remove random date
+    random_date := (SELECT TIMESTAMP '2023-10-05 00:00:00' + random() * (TIMESTAMP '2023-10-11 00:00:00' - TIMESTAMP '2023-10-05 00:00:00'));
     author_id := (SELECT ID FROM MEDUSER WHERE USERNAME = author_username);
     category_id := (SELECT ID FROM TAG WHERE NAME = category_name);
-    INSERT INTO CONTENT (AUTHOR, DATA) VALUES (author_id, content_text) RETURNING ID INTO content_id;
-    INSERT INTO QUESTION (TITLE, QUESTION_CONTENT_ID, AUTHOR) VALUES (title, content_id, author_id) RETURNING ID INTO question_id;
+    -- INSERT INTO CONTENT (AUTHOR, DATA) VALUES (author_id, content_text) RETURNING ID INTO content_id;
+    INSERT INTO CONTENT (AUTHOR, DATA, CREATED) VALUES (author_id, content_text, random_date) RETURNING ID INTO content_id;
+    -- INSERT INTO QUESTION (TITLE, QUESTION_CONTENT_ID, AUTHOR) VALUES (title, content_id, author_id) RETURNING ID INTO question_id;
+    INSERT INTO QUESTION (TITLE, QUESTION_CONTENT_ID, AUTHOR, DATE) VALUES (title, content_id, author_id, random_date) RETURNING ID INTO question_id;
     INSERT INTO QUESTION_TAG (QUESTION_ID, TAG_ID) VALUES (question_id, category_id);
     RETURN question_id;
 END $$ LANGUAGE plpgsql;

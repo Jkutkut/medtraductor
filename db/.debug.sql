@@ -17,3 +17,8 @@ WHERE QT.QUESTION_ID = Q.ID AND QT.TAG_ID = (
 );
 
 -----------------------------------------------
+
+SELECT date_trunc('day', date) "day", COUNT(*) AS "questions"
+FROM question GROUP BY 1 ORDER BY 1 ASC;
+
+-----------------------------------------------
