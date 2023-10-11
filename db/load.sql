@@ -9,29 +9,29 @@ DELETE FROM CONTENT;
 DELETE FROM MEDUSER;
 
 /* USERS */
-INSERT INTO MEDUSER (USERNAME, CREATED) VALUES
-    ('jkutkut', '2023-10-05'),
-    ('jane_doe', '2023-10-06'),
-    ('john_smith', '2023-10-06'),
-    ('samuel_white', '2023-10-07'),
-    ('jennifer_clark', '2023-10-07'),
-    ('daniel_lee', '2023-10-07'),
-    ('michael_brown', '2023-10-08'),
-    ('elizabeth_turner', '2023-10-08'),
-    ('sophia_hall', '2023-10-08'),
-    ('sarah_clark', '2023-10-08'),
-    ('oliver_adams', '2023-10-09'),
-    ('natalie_smith', '2023-10-09'),
-    ('william_miller', '2023-10-09'),
-    ('sophia_davis', '2023-10-09'),
-    ('thomas_johnson', '2023-10-10'),
-    ('grace_martin', '2023-10-10'),
-    ('richard_adams', '2023-10-10'),
-    ('robert_harris', '2023-10-10'),
-    ('anna_miller', '2023-10-11'),
-    ('david_brown', '2023-10-11'),
-    ('michael_wilson', '2023-10-11'),
-    ('emily_turner', '2023-10-11');
+SELECT
+    new_user('jkutkut'),
+    new_user('jane_doe'),
+    new_user('john_smith'),
+    new_user('samuel_white'),
+    new_user('jennifer_clark'),
+    new_user('daniel_lee'),
+    new_user('michael_brown'),
+    new_user('elizabeth_turner'),
+    new_user('sophia_hall'),
+    new_user('sarah_clark'),
+    new_user('oliver_adams'),
+    new_user('natalie_smith'),
+    new_user('william_miller'),
+    new_user('sophia_davis'),
+    new_user('thomas_johnson'),
+    new_user('grace_martin'),
+    new_user('richard_adams'),
+    new_user('robert_harris'),
+    new_user('anna_miller'),
+    new_user('david_brown'),
+    new_user('michael_wilson'),
+    new_user('emily_turner');
 
 /* TAGS */
 INSERT INTO TAG (NAME, DESCRIPTION) VALUES
