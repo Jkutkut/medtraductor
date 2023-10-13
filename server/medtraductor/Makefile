@@ -27,7 +27,7 @@ terminal_installer:
 	sudo chown -R ${USER}:${USER} .
 
 # ****** Project ******
-# DEV_PORT = 9000
+DEV_PORT = 2000
 NAME = $(shell grep -m 1 name Cargo.toml | cut -d '"' -f 2)
 VERSION = "v$(shell grep -m 1 version Cargo.toml | cut -d '"' -f 2)"
 
@@ -64,9 +64,10 @@ stop_release:
 
 DEV_ATTRS = --name ${DEV_CONTAINER_NAME} \
 			${RUN_ATTRS} \
-			# -p ${PORT}:${PORT} \
+			-p ${DEV_PORT}:${DEV_PORT} \
+			-v ${DIR}/../../:/installation/
 
-DEV_ARGS = -c -w src -x run
+DEV_ARGS =	-c -w src -x run
 
 run_dev:
 	${DOCKER_RUN_IT} ${DEV_ATTRS} --entrypoint ${CARGO} ${DEV_IMAGE_NAME} watch ${DEV_ARGS}
