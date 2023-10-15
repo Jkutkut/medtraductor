@@ -52,23 +52,25 @@ mod api {
 		let mut result_arr = Vec::new();
 		let stmt = db.prepare(&request.query).await.unwrap();
 		for row in db.query(&stmt, &[]).await.unwrap() {
-			let vec = row.columns().iter().map(|col| {
-				println!("col: {} -- {}", col.name(), col.type_());
-				match col.type_() {
-					&Type::VARCHAR => ResponseTypes::Str(row.get::<_, String>(col.name())),
-					&Type::UUID => ResponseTypes::Str(row.get::<_, Uuid>(col.name()).to_string()),
+			let mut result_obj = HashMap::new();
+			for col in row.columns() {
+				let col_name = col.name();
+				let col_value = match col.type_() {
+					&Type::VARCHAR => ResponseTypes::Str(row.get::<_, String>(col_name)),
+					&Type::UUID => ResponseTypes::Str(row.get::<_, Uuid>(col_name).to_string()),
 					&Type::TIMESTAMP => {
 						let datetime = chrono::TimeZone::from_utc_datetime(
 							&chrono::offset::Utc,
-							&row.get::<_, chrono::NaiveDateTime>(col.name())
+							&row.get::<_, chrono::NaiveDateTime>(col_name)
 						);
 						let datetime = datetime.format(DATETIME_FORMAT_ISO_8601).to_string();
 						ResponseTypes::Str(datetime)
 					},
-					_ => ResponseTypes::Str(format!("_INVALID_FIELD_{}", col.name())),
-				}
-			}).collect::<Vec<ResponseTypes>>();
-			result_arr.push(ResponseTypes::Arr(vec));
+					_ => ResponseTypes::Str(format!("_INVALID_FIELD_{}", col_name)),
+				};
+				result_obj.insert(col_name.to_string(), col_value);
+			}
+			result_arr.push(ResponseTypes::Obj(result_obj));
 			size += 1;
 		}
 		let mut result = HashMap::new();
