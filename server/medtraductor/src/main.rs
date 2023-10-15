@@ -5,16 +5,22 @@ use rocket::serde::json::Json;
 mod config;
 // mod api;
 mod api {
-	use rocket::{get, routes, serde::json::Json, http::CookieJar, State};
+	use rocket::{get, routes, serde::json::Json, /*http::CookieJar,*/ State};
 	use crate::config::route_error::InvalidAPI;
 	use rocket::serde::{Deserialize, Serialize};
-	use tokio_postgres::{Client};
+	use tokio_postgres::{Client, types::Type};
 	use std::collections::HashMap;
 	use uuid::Uuid;
 
+	const DATETIME_FORMAT_ISO_8601: &str = "%Y-%m-%dT%H:%M:%S%.3fZ";
+
 	pub fn get_v1_routes() -> Vec<rocket::Route> {
-		routes![
+		#[cfg(debug_assertions)]
+		return routes![
 			dbquery
+		];
+		#[cfg(not(debug_assertions))]
+		routes![
 		]
 	}
 
@@ -26,18 +32,19 @@ mod api {
 
 	type DBQueryRequest = Json<DBQuery>;
 	#[derive(Debug, Serialize)]
+	#[serde(untagged)]
 	enum ResponseTypes {
 		Str(String),
 		Arr(Vec<ResponseTypes>),
 		Int(i32),
 		Obj(HashMap<String, ResponseTypes>),
 	}
-	type DBQueryResponse = Json<HashMap<String, ResponseTypes>>;
+	type DBQueryResponse = Json<ResponseTypes>;
 
 	#[get("/dbquery", format = "json", data = "<request>")]
 	async fn dbquery(
 		db: &State<Client>,
-		cookies: &CookieJar<'_>,
+		// cookies: &CookieJar<'_>,
 		request: DBQueryRequest,
 	) -> Result<DBQueryResponse, InvalidAPI> {
 		println!("request: {:?}", request);
@@ -45,27 +52,32 @@ mod api {
 		let mut result_arr = Vec::new();
 		let stmt = db.prepare(&request.query).await.unwrap();
 		for row in db.query(&stmt, &[]).await.unwrap() {
-			let row_size = row.len();
-			let mut vec = Vec::new();
-			for i in 0..row_size {
-				match row.try_get::<_, String>(i) {
-					Ok(value) => vec.push(ResponseTypes::Str(value)),
-					Err(e) => {
-						eprintln!("Error while getting value from DB");
-						eprintln!("{:?}", e);
-					}
+			let vec = row.columns().iter().map(|col| {
+				println!("col: {} -- {}", col.name(), col.type_());
+				match col.type_() {
+					&Type::VARCHAR => ResponseTypes::Str(row.get::<_, String>(col.name())),
+					&Type::UUID => ResponseTypes::Str(row.get::<_, Uuid>(col.name()).to_string()),
+					&Type::TIMESTAMP => {
+						let datetime = chrono::TimeZone::from_utc_datetime(
+							&chrono::offset::Utc,
+							&row.get::<_, chrono::NaiveDateTime>(col.name())
+						);
+						let datetime = datetime.format(DATETIME_FORMAT_ISO_8601).to_string();
+						ResponseTypes::Str(datetime)
+					},
+					_ => ResponseTypes::Str(format!("_INVALID_FIELD_{}", col.name())),
 				}
-			}
+			}).collect::<Vec<ResponseTypes>>();
 			result_arr.push(ResponseTypes::Arr(vec));
 			size += 1;
 		}
-		let mut result: DBQueryResponse = Json(HashMap::new());
-		result.0.insert("size".to_string(), ResponseTypes::Int(size));
-		result.0.insert(
+		let mut result = HashMap::new();
+		result.insert("size".to_string(), ResponseTypes::Int(size));
+		result.insert(
 			"data".to_string(),
 			ResponseTypes::Arr(result_arr)
 		);
-		Ok(result)
+		Ok(Json(ResponseTypes::Obj(result)))
 	}
 
 }
