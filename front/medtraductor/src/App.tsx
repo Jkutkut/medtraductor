@@ -1,19 +1,23 @@
-import {GoogleLogin, GoogleOAuthProvider} from "@react-oauth/google"
+import googleAuth from "./hooks/googleAuth"
 
 function App() {
-  const responseMessage = (response: any) => {
-    console.log(response);
-  };
-  const errorMessage = (error: any = null) => {
-    console.log(error);
-  };
-
+  const {login, logout, profile} = googleAuth();
   return (
     <>
-      <h1>App</h1>
-      <GoogleLogin onSuccess={responseMessage} onError={errorMessage} />
-    </>
-  )
+      <h1>medtraductor</h1>
+      {profile && <>
+        <div>
+          <img src={profile.picture} alt="user image" />
+          <h3>User Logged in</h3>
+          <p>Name: {profile.name}</p>
+          <p>Email Address: {profile.email}</p>
+          <button onClick={logout}>Log out</button>
+        </div>
+      </> || <>
+          <button onClick={() => login()}>Sign in with Google 🚀 </button>
+        </>
+      }
+    </>)
 }
 
 export default App
