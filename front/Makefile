@@ -16,6 +16,8 @@ DOCKER_CMD = docker run --rm -it
 DOCKER_APP_V = -v ${CURRENT_PATH}/${FRONT_NAME}/:/${DIR_NAME} -w /${DIR_NAME}
 DOCKER_IMG_FRONT = node:current-alpine3.16
 
+SECRETS = ${DIR_NAME}/.env
+
 usage:
 	@echo "Usage: make [target]"
 	@echo ""
@@ -34,7 +36,10 @@ preInstall:
 install:
 	${DOCKER_CMD} --name ${FRONT_NAME}_install ${DOCKER_APP_V} --entrypoint=npm ${DOCKER_IMG_FRONT} install
 
-run_front:
+${SECRETS}:
+	./../.config/setSecrets_front.sh ${SECRETS}
+
+run_front: ${SECRETS}
 	$(DOCKER_CMD) --name ${FRONT_NAME}_front -p ${PORT_FRONT}:${PORT_FRONT} ${DOCKER_APP_V} --entrypoint=npm -e PORT=${PORT_FRONT} ${DOCKER_IMG_FRONT} run dev
 
 test_front:
