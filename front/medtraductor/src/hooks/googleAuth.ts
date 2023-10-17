@@ -10,7 +10,14 @@ interface GoogleProfile {
   family_name: string;
   picture: string;
   locale: string;
-}
+};
+
+interface GoogleAuth {
+  login: () => void;
+  logout: () => void;
+  user: TokenResponse | null;
+  profile: GoogleProfile | null;
+};
 
 const googleAuth = () => {
   // TODO load profile on demand
@@ -65,8 +72,9 @@ const googleAuth = () => {
     });
   }, [user]);
 
-
-  return {login, logout, user, profile};
+  const auth: GoogleAuth = {login, logout, user, profile};
+  return auth;
 }
 
 export default googleAuth;
+export type {GoogleAuth, GoogleProfile};
