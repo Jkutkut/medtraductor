@@ -5,7 +5,7 @@ use rocket::serde::json::Json;
 mod config;
 // mod api;
 mod api {
-	use rocket::{get, routes, serde::json::Json, /*http::CookieJar,*/ State};
+	use rocket::{get, post, routes, serde::json::Json, /*http::CookieJar,*/ State};
 	use crate::config::route_error::InvalidAPI;
 	use rocket::serde::{Deserialize, Serialize};
 	use tokio_postgres::{Client, types::Type};
@@ -17,7 +17,8 @@ mod api {
 	pub fn get_v1_routes() -> Vec<rocket::Route> {
 		#[cfg(debug_assertions)]
 		return routes![
-			dbquery
+			dbquery,
+			dbquery_js,
 		];
 		#[cfg(not(debug_assertions))]
 		routes![
@@ -40,6 +41,14 @@ mod api {
 		Obj(HashMap<String, ResponseTypes>),
 	}
 	type DBQueryResponse = Json<ResponseTypes>;
+
+	#[post("/dbquery", format = "json", data = "<request>")]
+	async fn dbquery_js(
+		db: &State<Client>,
+		request: DBQueryRequest,
+	) -> Result<DBQueryResponse, InvalidAPI> {
+		dbquery(db, request).await
+	}
 
 	#[get("/dbquery", format = "json", data = "<request>")]
 	async fn dbquery(
@@ -97,7 +106,7 @@ async fn rocket() -> Rocket<Build> {
 	// let args: Vec<String> = env::args().collect();
 	// TODO handle args
 	let port = 2000;
-	let db_host = "172.17.0.3";
+	let db_host = "172.17.0.2";
 	let db_port = 5432;
 
 	let db_properties = format!(

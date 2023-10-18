@@ -5,6 +5,7 @@ import UserProvider from "./context/UserProvider";
 import googleAuth from "./hooks/googleAuth"
 import ErrorPage from "./components/errors/ErrorPage";
 import Header from "./components/header/Header";
+import Browser from "./pages/browser/Browser";
 
 function App() {
   const gAuth = googleAuth();
@@ -21,7 +22,7 @@ function App() {
     <UserProvider gAuth={gAuth}>
       <Header profile={profile} logout={logout} />
       <Routes>
-        <Route path="/" element={<Navigate to="/profile"/>} />
+        <Route path="/" element={<Browser />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/login" element={<Navigate to="/"/>} />
         <Route path="/*" element={<ErrorPage/>} />
