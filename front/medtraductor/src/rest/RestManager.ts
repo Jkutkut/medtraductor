@@ -34,6 +34,21 @@ class RestManager {
       }
     );
   }
+
+  public async getPagedQuestions(
+    page: number,
+    pageSize: number
+  ): Promise<DBQueryResponse<QuestionModel>> {
+    const offset = page * pageSize;
+    return this.api.fetch(this.host, "/api/v1/dbquery", ApiMethod.Post,
+      (response: Response) => {
+        return response.json();
+      },
+      {
+        query: `SELECT * FROM QUESTION ORDER BY DATE DESC LIMIT ${pageSize} OFFSET ${offset}`
+      }
+    );
+  }
 };
 
 export default RestManager;
