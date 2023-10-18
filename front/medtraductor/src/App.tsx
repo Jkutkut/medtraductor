@@ -4,6 +4,7 @@ import Profile from "./components/profile/Profile";
 import UserProvider from "./context/UserProvider";
 import googleAuth from "./hooks/googleAuth"
 import ErrorPage from "./components/errors/ErrorPage";
+import Header from "./components/header/Header";
 
 function App() {
   const gAuth = googleAuth();
@@ -18,7 +19,7 @@ function App() {
   }
   return <>
     <UserProvider gAuth={gAuth}>
-      <h1>medtraductor</h1>
+      <Header profile={profile} logout={logout} />
       <Routes>
         <Route path="/" element={<Navigate to="/profile"/>} />
         <Route path="/profile" element={<Profile />} />
