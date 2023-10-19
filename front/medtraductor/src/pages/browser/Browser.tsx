@@ -1,5 +1,6 @@
 import {useState} from "react";
 import questionBrowser from "../../hooks/questionBrowser";
+import {Link} from "react-router-dom";
 
 interface Props {
 
@@ -42,6 +43,7 @@ const Browser = ({}: Props) => {
           <div>
             <h4>{q.title}</h4>
             <p>{parseDate(q.date)}</p>
+            <Link to={`/questions/${q.id}/${q.title}`}>view</Link>
           </div>
         </li>
       ))}

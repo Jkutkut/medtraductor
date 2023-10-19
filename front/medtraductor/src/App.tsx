@@ -6,6 +6,8 @@ import googleAuth from "./hooks/googleAuth"
 import ErrorPage from "./components/errors/ErrorPage";
 import Header from "./components/header/Header";
 import Browser from "./pages/browser/Browser";
+import Question from "./pages/question/Question";
+import Questions from "./pages/question/Questions";
 
 function App() {
   const gAuth = googleAuth();
@@ -22,9 +24,13 @@ function App() {
     <UserProvider gAuth={gAuth}>
       <Header profile={profile} logout={logout} />
       <Routes>
-        <Route path="/" element={<Browser />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/login" element={<Navigate to="/"/>} />
+        <Route path="/" element={<Navigate to="/questions"/>} />
+        <Route path="profile" element={<Profile />} />
+        <Route path="login" element={<Navigate to="/"/>} />
+        <Route path="questions" element={<Questions />}>
+          <Route index element={<Browser />} />
+          <Route path=":id/:title" element={<Question />} />
+        </Route>
         <Route path="/*" element={<ErrorPage/>} />
       </Routes>
     </UserProvider>
