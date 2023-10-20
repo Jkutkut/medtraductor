@@ -10,18 +10,15 @@ interface Props {
 
 const Question = ({}: Props) => {
   let {id, title} = useParams();
-
   let {data: question, isLoading,isError} = restSingleContent<QuestionModel>(
-    RestManager.getInstance().getQuestion(id!)
+    () => RestManager.getInstance().getQuestion(id!)
   );
   if (isLoading) {
     return <Loading />;
   }
   if (!id || !title || isError) {
-    //return <Navigate to="/404" />;
     return <>404: {id} is not a valid question</>;
   }
-
   return <>
     <Link to="../">Back</Link>
     <h3>{title}</h3>
