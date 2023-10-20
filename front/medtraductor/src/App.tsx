@@ -9,11 +9,15 @@ import Browser from "./pages/browser/Browser";
 import Question from "./pages/question/Question";
 import Questions from "./pages/question/Questions";
 import SaveUrlAndRedirect from "./components/router/SaveUrlAndRedirect";
+import Loading from "./components/loading/Loading";
 
 const App = () => {
   const gAuth = googleAuth();
-  const {login, logout, profile} = gAuth;
+  const {isLoading, login, logout, profile} = gAuth;
   const [searchParams] = useSearchParams();
+  if (isLoading) {
+    return <Loading/>;
+  }
   if (!profile) {
     return <>
       <Routes>

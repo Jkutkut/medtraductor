@@ -13,27 +13,49 @@ interface GoogleProfile {
 };
 
 interface GoogleAuth {
+  isLoading: boolean;
   login: () => void;
   logout: () => void;
   user: TokenResponse | null;
   profile: GoogleProfile | null;
 };
 
+const loadUser = (): TokenResponse | null => {
+  const user = sessionStorage.getItem('user');
+  if (!user) {
+    return null;
+  }
+  return JSON.parse(user) as TokenResponse;
+};
+
+
 const googleAuth = () => {
   // TODO load profile on demand
   // TODO handle old tokens
-  const [user, setUser] = useState<TokenResponse | null>(null);
+  const [user, setUser] = useState<TokenResponse | null>(loadUser());
   const [profile, setProfile] = useState<GoogleProfile | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const saveCredentials = (user: any) => {
     setUser(user);
     sessionStorage.setItem('user', JSON.stringify(user));
   };
 
-  const login = useGoogleLogin({
-    onSuccess: (user) => saveCredentials(user),
-    onError: (error) => console.error('Login Failed:', error)
+  const gLogin = useGoogleLogin({
+    onSuccess: (user) => {
+      saveCredentials(user);
+      setIsLoading(false);
+    },
+    onError: (error) => {
+      console.error('Login Failed:', error);
+      setIsLoading(false);
+    }
   });
+
+  const login = () => {
+    setIsLoading(true);
+    gLogin();
+  };
 
   const logout = () => {
     googleLogout();
@@ -43,14 +65,10 @@ const googleAuth = () => {
 
   useEffect(() => {
     if (!user) {
-      const user = sessionStorage.getItem('user');
-      if (!user) {
-        return;
-      }
-      setUser(JSON.parse(user) as TokenResponse);
       return;
     }
-    console.info('Login Success:', user);
+    // console.info('Login Success:', user);
+    setIsLoading(true);
     fetch(`https://www.googleapis.com/oauth2/v1/userinfo`, {
       method: 'GET',
       headers: {
@@ -64,15 +82,16 @@ const googleAuth = () => {
       return await res.json();
     })
     .then((profile) => {
-      console.info('profile', profile);
+      // console.info('profile', profile);
       setProfile(profile);
     }).catch((err) => {
       console.error(err);
       logout();
-    });
+    })
+    .finally(() => setIsLoading(false));
   }, [user]);
 
-  const auth: GoogleAuth = {login, logout, user, profile};
+  const auth: GoogleAuth = {isLoading, login, logout, user, profile};
   return auth;
 }
 
