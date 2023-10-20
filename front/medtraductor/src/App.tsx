@@ -1,4 +1,4 @@
-import {Navigate, Route, Routes, useLocation, useSearchParams} from "react-router-dom";
+import {Navigate, Route, Routes, useSearchParams} from "react-router-dom";
 import Login from "./pages/login/Login";
 import Profile from "./components/profile/Profile";
 import UserProvider from "./context/UserProvider";

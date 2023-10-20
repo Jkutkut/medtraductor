@@ -1,4 +1,4 @@
-import QuestionModel from "../model/QuestionModel";
+import QuestionModel from "../model/sql/QuestionModel";
 import ApiManager from "./APIManager";
 import ApiMethod from "./ApiMethod";
 import DBQueryResponse from "./model/DBQueryResponse";
