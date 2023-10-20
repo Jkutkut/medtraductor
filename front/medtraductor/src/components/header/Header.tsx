@@ -13,6 +13,7 @@ const Header = ({profile, logout}: Props) => {
   return <>
     <Navbar>
       <Link to="/" className="navbar-brand">Home</Link>
+      <Link to="/questions" className="nav-link">Questions</Link>
       <NavbarOffCanvas id="offcanvasNavbar" title="Menu">
         <NavbarOffCanvasItem title="Profile">
           <Link to="/profile"

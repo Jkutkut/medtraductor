@@ -37,17 +37,15 @@ const Browser = ({}: Props) => {
     <div className="mb-4">
       {reverse && loadMore}
     </div>
-    <ul>
-      {sortedQuestions.map((q, i) => (
-        <li key={i}>
-          <div>
-            <h4>{q.title}</h4>
-            <p>{parseDate(q.date)}</p>
-            <Link to={`/questions/${q.id}/${q.title}`}>view</Link>
-          </div>
-        </li>
-      ))}
-    </ul>
+    {sortedQuestions.map((q, i) => (
+      <div key={i} className="card p-3 mb-3">
+        <h4>{q.title}</h4>
+        <p>{parseDate(q.date)}</p>
+        <Link to={`/questions/${q.id}/${q.title}`} className="btn btn-outline-primary">
+          view
+        </Link>
+      </div>
+    ))}
     {!reverse && loadMore}
   </>;
 };

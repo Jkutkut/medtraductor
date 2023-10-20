@@ -24,7 +24,6 @@ const Question = ({}: Props) => {
   }
   question = question!;
   return <>
-    <Link to="../">Back</Link>
     <h3>{question.title}</h3>
     <p>id: {question.id}</p>
     <p>author: {question.author}</p>

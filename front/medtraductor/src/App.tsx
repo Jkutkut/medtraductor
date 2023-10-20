@@ -32,16 +32,18 @@ const App = () => {
   return <>
     <UserProvider gAuth={gAuth}>
       <Header profile={profile} logout={logout} />
-      <Routes>
-        <Route path="/" element={<Navigate to="/questions"/>} />
-        <Route path="profile" element={<Profile />} />
-        <Route path="login" element={<Navigate to="/"/>} />
-        <Route path="questions" element={<Questions />}>
-          <Route index element={<Browser />} />
-          <Route path=":id/:title" element={<Question />} />
-        </Route>
-        <Route path="/*" element={<ErrorPage/>} />
-      </Routes>
+      <div className="mx-2 pb-3">
+        <Routes>
+          <Route path="/" element={<Navigate to="/questions"/>} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="login" element={<Navigate to="/"/>} />
+          <Route path="questions" element={<Questions />}>
+            <Route index element={<Browser />} />
+            <Route path=":id/:title" element={<Question />} />
+          </Route>
+          <Route path="/*" element={<ErrorPage/>} />
+        </Routes>
+      </div>
     </UserProvider>
   </>;
 }
