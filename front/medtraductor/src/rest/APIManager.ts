@@ -20,8 +20,9 @@ class ApiManager {
   }
 
   private handleBadResponse<T>(response: Response): Promise<T> {
-    return new Promise((_resolve, reject) => {
-      reject(`Bad response: http ${response.status}\n${response.statusText}`);
+    return new Promise(async (_resolve, reject) => {
+      const text = await response.text();
+      reject(`Bad response: http ${response.status} -- ${response.statusText}\n\n${text}`);
     });
   }
 
@@ -49,7 +50,7 @@ class ApiManager {
     method: ApiMethod,
     parser: FutureParser<Response, T>,
     body: any | undefined,
-  ): Promise<T> {
+  ): Promise<T | null> {
     return this.justFetch(host, endpoint, method, body).then((response: Response) => {
       if (response.ok) {
         return parser(response);
