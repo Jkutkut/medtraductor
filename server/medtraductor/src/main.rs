@@ -59,7 +59,20 @@ mod api {
 		println!("request: {:?}", request);
 		let mut size = 0;
 		let mut result_arr = Vec::new();
-		let stmt = db.prepare(&request.query).await.unwrap();
+		let stmt = match db.prepare(&request.query).await {
+			Ok(stmt) => stmt,
+			Err(e) => {
+				return Err(InvalidAPI::new_from_string(e.to_string()));
+			}
+		};
+		let query = match db.query(&stmt, &[]).await {
+			Ok(query) => query,
+			Err(e) => {
+				return Err(InvalidAPI::new_from_string(
+					format!("Error while executing query: {}", e)
+				));
+			}
+		};
 		for row in db.query(&stmt, &[]).await.unwrap() {
 			let mut result_obj = HashMap::new();
 			for col in row.columns() {
