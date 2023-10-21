@@ -6,6 +6,7 @@ mod constants;
 mod model;
 mod config;
 mod api;
+mod utils;
 
 pub const ENV: &'static str = "/installation/.env";
 

@@ -4,8 +4,8 @@ use tokio_postgres::{Client, types::Type};
 use std::collections::HashMap;
 use uuid::Uuid;
 
-use crate::constants::DATETIME_FORMAT_ISO_8601;
 use crate::model::dbquery_model::{DBQueryRequest, DBQueryResponse, ResponseTypes};
+use crate::utils::timestamp2str;
 
 #[post("/dbquery", format = "json", data = "<request>")]
 pub async fn dbquery_js(
@@ -18,7 +18,6 @@ pub async fn dbquery_js(
 #[get("/dbquery", format = "json", data = "<request>")]
 pub async fn dbquery(
 	db: &State<Client>,
-	// cookies: &CookieJar<'_>,
 	request: DBQueryRequest,
 ) -> Result<DBQueryResponse, InvalidAPI> {
 	println!("request: {:?}", request);
@@ -45,14 +44,9 @@ pub async fn dbquery(
 			let col_value = match col.type_() {
 				&Type::VARCHAR => ResponseTypes::Str(row.get::<_, String>(col_name)),
 				&Type::UUID => ResponseTypes::Str(row.get::<_, Uuid>(col_name).to_string()),
-				&Type::TIMESTAMP => {
-					let datetime = chrono::TimeZone::from_utc_datetime(
-						&chrono::offset::Utc,
-						&row.get::<_, chrono::NaiveDateTime>(col_name)
-					);
-					let datetime = datetime.format(DATETIME_FORMAT_ISO_8601).to_string();
-					ResponseTypes::Str(datetime)
-				},
+				&Type::TIMESTAMP => ResponseTypes::Str(timestamp2str(
+					&row.get::<_, chrono::NaiveDateTime>(col_name)
+				)),
 				_ => ResponseTypes::Str(format!("_INVALID_FIELD_{}", col_name)),
 			};
 			result_obj.insert(col_name.to_string(), col_value);
