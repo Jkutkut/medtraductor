@@ -4,7 +4,6 @@ use rocket::{get, State};
 use tokio_postgres::{Client};
 use crate::model::{Question, IdOrContent, IdOrUser};
 use crate::config::route_error::InvalidAPI;
-use crate::constants::ERROR_INVALID_UUID;
 use chrono::NaiveDateTime;
 use crate::utils::timestamp2str;
 
@@ -15,25 +14,25 @@ pub async fn question_detail(
 ) -> Result<Json<Question>, InvalidAPI> {
 	let uuid = match uuid.get() {
 		Ok(u) => u,
-		Err(_) => return Err(InvalidAPI::new(ERROR_INVALID_UUID))
+		Err(e) => return Err(InvalidAPI::new(e))
 	};
 	let query_str = "SELECT * FROM question WHERE id = $1";
 	let stmt = match db.prepare(query_str).await {
 		Ok(stmt) => stmt,
 		Err(e) => {
-			return Err(InvalidAPI::new_from_string(e.to_string()));
+			return Err(InvalidAPI::new(e.to_string()));
 		}
 	};
 	let query = match db.query(&stmt, &[&uuid]).await {
 		Ok(query) => query,
 		Err(e) => {
-			return Err(InvalidAPI::new_from_string(
+			return Err(InvalidAPI::new(
 				format!("Error while executing query: {}", e)
 			));
 		}
 	};
 	if query.len() != 1 {
-		return Err(InvalidAPI::new_from_string(
+		return Err(InvalidAPI::new(
 			format!("Expected 1 question, got {}", query.len())
 		));
 	}

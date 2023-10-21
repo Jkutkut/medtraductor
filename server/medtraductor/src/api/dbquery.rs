@@ -12,7 +12,7 @@ pub async fn dbquery_js(
 	db: &State<Client>,
 	request: DBQueryRequest,
 ) -> Result<DBQueryResponse, InvalidAPI> {
-	dbquery(db, request).await // TODO await?
+	dbquery(db, request).await
 }
 
 #[get("/dbquery", format = "json", data = "<request>")]
@@ -26,13 +26,13 @@ pub async fn dbquery(
 	let stmt = match db.prepare(&request.query).await {
 		Ok(stmt) => stmt,
 		Err(e) => {
-			return Err(InvalidAPI::new_from_string(e.to_string()));
+			return Err(InvalidAPI::new(e.to_string()));
 		}
 	};
 	let query = match db.query(&stmt, &[]).await {
 		Ok(query) => query,
 		Err(e) => {
-			return Err(InvalidAPI::new_from_string(
+			return Err(InvalidAPI::new(
 				format!("Error while executing query: {}", e)
 			));
 		}

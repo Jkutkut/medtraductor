@@ -18,11 +18,7 @@ pub struct InvalidAPI {
 }
 
 impl InvalidAPI {
-	pub fn new_from_string(message: String) -> InvalidAPI {
+	pub fn new(message: String) -> InvalidAPI {
 		InvalidAPI { message }
-	}
-
-	pub fn new(message: &'static str) -> InvalidAPI {
-		InvalidAPI::new_from_string(message.to_string())
 	}
 }
