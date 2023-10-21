@@ -45,13 +45,13 @@ pub struct Question {
 	pub author: IdOrUser,
 	pub date: Timestamp,
 	pub answers: Option<Vec<Content>>,
-	pub tags: Option<Vec<Tags>>
+	pub tags: Option<Vec<Tag>>
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct Tags {
-	pub id: Uuid,
+pub struct Tag {
+	pub id: i32,
 	pub name: String,
 	pub description: String,
-	pub related_tags: Option<Vec<Tags>>
+	pub related_tags: Option<Vec<Tag>>
 }
