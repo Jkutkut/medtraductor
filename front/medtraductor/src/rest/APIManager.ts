@@ -49,7 +49,7 @@ class ApiManager {
     endpoint: string,
     method: ApiMethod,
     parser: FutureParser<Response, T>,
-    body: any | undefined,
+    body?: any
   ): Promise<T | null> {
     return this.justFetch(host, endpoint, method, body).then((response: Response) => {
       if (response.ok) {

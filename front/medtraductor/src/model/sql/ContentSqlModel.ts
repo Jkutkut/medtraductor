@@ -1,4 +1,4 @@
-interface ContentModel {
+interface ContentSqlModel {
   id: string;
   author: string;
   created: string;
@@ -7,4 +7,4 @@ interface ContentModel {
   data: string;
 };
 
-export default ContentModel;
+export default ContentSqlModel;

@@ -1,4 +1,4 @@
-interface QuestionModel {
+interface QuestionSqlModel {
   id: string;
   title: string;
   question_content_id: string;
@@ -6,4 +6,4 @@ interface QuestionModel {
   author: string;
 };
 
-export default QuestionModel;
+export default QuestionSqlModel;

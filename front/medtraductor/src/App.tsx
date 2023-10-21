@@ -6,7 +6,7 @@ import googleAuth from "./hooks/googleAuth"
 import ErrorPage from "./components/errors/ErrorPage";
 import Header from "./components/header/Header";
 import Browser from "./pages/browser/Browser";
-import Question from "./pages/question/Question";
+import QuestionDetail from "./pages/question/QuestionDetail";
 import Questions from "./pages/question/Questions";
 import SaveUrlAndRedirect from "./components/router/SaveUrlAndRedirect";
 import Loading from "./components/loading/Loading";
@@ -39,7 +39,7 @@ const App = () => {
           <Route path="login" element={<Navigate to="/"/>} />
           <Route path="questions" element={<Questions />}>
             <Route index element={<Browser />} />
-            <Route path=":id/:title" element={<Question />} />
+            <Route path=":id/:title" element={<QuestionDetail />} />
           </Route>
           <Route path="/*" element={<ErrorPage/>} />
         </Routes>

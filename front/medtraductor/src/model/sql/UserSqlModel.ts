@@ -1,7 +1,7 @@
-interface UserModel {
+interface UserSqlModel {
   id: string;
   username: string;
   created: string;
 };
 
-export default UserModel;
+export default UserSqlModel;
